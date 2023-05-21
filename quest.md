@@ -1,5 +1,6 @@
 ## Step1
 テーブル設計
+
 URL：https://www.notion.so/fmasaharu/b379165976bb4a35a089c280effb0d84?pvs=4
 
 ## Step2
@@ -77,7 +78,7 @@ CREATE TABLE view_counts (
 );
 ```
 
-- サンプルデータを入れる
+- サンプルデータを入れる（適宜追加や変更をしてください）
 
 ```
 INSERT INTO channels (name)
@@ -126,4 +127,70 @@ VALUES
     (4, 4, 8000);  
 
 ```
+
+## Step3
+
+- よく見られているエピソードを知りたいです。エピソード視聴数トップ3のエピソードタイトルと視聴数を取得してください
+```
+SELECT 
+    e.title AS episode_title,
+    vc.views AS view_count
+FROM
+    view_counts AS vc
+JOIN 
+    episodes AS e ON e.id = vc.episode_id
+ORDER BY 
+    vc.views DESC
+LIMIT 3;
+```
+
+- よく見られているエピソードの番組情報やシーズン情報も合わせて知りたいです。エピソード視聴数トップ3の番組タイトル、シーズン数、エピソード数、エピソードタイトル、視聴数を取得してください
+```
+SELECT 
+    p.title AS program_title,
+    s.season AS season_number,
+    e.episode AS episode_number,
+    e.title AS episode_title,
+    vc.views AS view_count
+FROM
+    view_counts AS vc
+JOIN 
+    episodes AS e ON e.id = vc.episode_id
+JOIN 
+    seasons AS s ON s.id = e.season_id
+JOIN 
+    programs AS p ON p.id = s.program_id
+ORDER BY 
+    vc.views DESC
+LIMIT 3;
+```
+
+- 本日の番組表を表示するために、本日、どのチャンネルの、何時から、何の番組が放送されるのかを知りたいです。本日放送される全ての番組に対して、チャンネル名、放送開始時刻(日付+時間)、放送終了時刻、シーズン数、エピソード数、エピソードタイトル、エピソード詳細を取得してください。なお、番組の開始時刻が本日のものを本日方法される番組とみなすものとします
+```
+SELECT 
+    c.name AS channel_name,
+    CONCAT(CURDATE(), ' ', cp.start_time) AS start_time,
+    CONCAT(CURDATE(), ' ', cp.end_time) AS end_time,
+    s.season AS season_number,
+    e.episode AS episode_number,
+    e.title AS episode_title,
+    e.description AS episode_description
+FROM
+    channel_programs AS cp
+JOIN
+    channels AS c ON c.id = cp.channel_id
+JOIN
+    programs AS p ON p.id = cp.program_id
+JOIN
+    seasons AS s ON s.program_id = p.id
+JOIN
+    episodes AS e ON e.season_id = s.id
+WHERE
+    DATE(e.air_date) = CURDATE()
+ORDER BY
+    start_time;
+
+```
+
+
 
