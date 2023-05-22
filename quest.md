@@ -17,61 +17,62 @@ use internet_tv;
 - 各テーブルを作成
 ```
 CREATE TABLE channels (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE programs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255),
     description TEXT
 );
 
 CREATE TABLE seasons (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    program_id INT NOT NULL,
-    season INT NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    program_id INT,
+    season INT,
     FOREIGN KEY (program_id) REFERENCES programs(id)
 );
 
 CREATE TABLE episodes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     season_id INT,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(255),
     description TEXT,
-    duration INT NOT NULL,
-    air_date DATE NOT NULL,
-    episode INT,
+    duration INT,
+    air_date DATE,
+    episode INT DEFAULT 0,
     FOREIGN KEY (season_id) REFERENCES seasons(id)
 );
 
 CREATE TABLE genres (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE programs_genres (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    genre_id INT NOT NULL,
-    program_id INT NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    genre_id INT,
+    program_id INT,
     FOREIGN KEY (genre_id) REFERENCES genres(id),
     FOREIGN KEY (program_id) REFERENCES programs(id)
 );
 
 CREATE TABLE channel_programs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    channel_id INT NOT NULL,
-    program_id INT NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    channel_id INT,
+    program_id INT,
+    start_time DATETIME,
+    end_time DATETIME,
+    is_repeat BOOL DEFAULT FALSE,
     FOREIGN KEY (channel_id) REFERENCES channels(id),
     FOREIGN KEY (program_id) REFERENCES programs(id)
 );
 
 CREATE TABLE view_counts (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    channel_program_id INT NOT NULL,
-    episode_id INT NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    channel_program_id INT,
+    episode_id INT,
     views INT DEFAULT 0,
     FOREIGN KEY (channel_program_id) REFERENCES channel_programs(id),
     FOREIGN KEY (episode_id) REFERENCES episodes(id)
