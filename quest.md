@@ -192,5 +192,33 @@ ORDER BY
 
 ```
 
+- 本日から一週間分、何日の何時から何の番組が放送されるのかを知りたいです。ドラマのチャンネルに対して、放送開始時刻、放送終了時刻、シーズン数、エピソード数、エピソードタイトル、エピソード詳細を本日から一週間分取得してください
 
+```
+SELECT 
+    e.air_date AS date,
+    cp.start_time AS start_time,
+    cp.end_time AS end_time,
+    s.season AS season_number,
+    e.episode AS episode_number,
+    e.title AS episode_title,
+    e.description AS episode_description
+FROM 
+    channels c
+JOIN 
+    channel_programs cp ON c.id = cp.channel_id
+JOIN 
+    programs p ON cp.program_id = p.id
+JOIN 
+    seasons s ON p.id = s.program_id
+JOIN 
+    episodes e ON s.id = e.season_id
+WHERE 
+    c.name = 'ドラマ' AND
+    e.air_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+ORDER BY 
+    date,
+    start_time;
+
+```
 
