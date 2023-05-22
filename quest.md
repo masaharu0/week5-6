@@ -82,49 +82,60 @@ CREATE TABLE view_counts (
 
 ```
 INSERT INTO channels (name)
-VALUES ('ドラマ1'), ('ドラマ2'), ('アニメ1'), ('アニメ2'), ('スポーツ'), ('ペット');
+VALUES ('Channel 1'), ('Channel 2'), ('Channel 3');
 
 INSERT INTO programs (title, description)
 VALUES 
-    ('プログラム1', 'これはプログラム1の説明です'), 
-    ('プログラム2', 'これはプログラム2の説明です');
+('Program 1', 'This is program 1'),
+('Program 2', 'This is program 2'),
+('Program 3', 'This is program 3');
 
 INSERT INTO seasons (program_id, season)
 VALUES 
-    (1, 1), 
-    (1, 2), 
-    (2, 1);
+(1, 1),
+(1, 2),
+(2, 1),
+(3, 1);
 
 INSERT INTO episodes (season_id, title, description, duration, air_date, episode)
 VALUES 
-    (1, 'エピソード1', 'これはエピソード1の説明です', 30, '2023-05-01', 1),
-    (2, 'エピソード2', 'これはエピソード2の説明です', 60, '2023-05-02', 1),
-    (2, 'エピソード3', 'これはエピソード3の説明です', 30, '2023-05-03', 2),
-    (3, 'エピソード4', 'これはエピソード4の説明です', 60, '2023-05-04', 1);
+(1, 'Episode 1', 'This is episode 1 of season 1', 30, '2023-05-19', 1),
+(1, 'Episode 2', 'This is episode 2 of season 1', 30, '2023-05-20', 2),
+(2, 'Episode 1', 'This is episode 1 of season 2', 30, '2023-05-21', 1),
+(3, 'Episode 1', 'This is episode 1 of program 2', 30, '2023-05-22', 1),
+(4, 'Episode 1', 'This is episode 1 of program 3', 30, '2023-05-23', 1);
 
 INSERT INTO genres (name)
-VALUES ('アニメ'), ('映画'), ('ドラマ'), ('ニュース');
+VALUES 
+('Genre 1'), 
+('Genre 2'), 
+('Genre 3');
 
 INSERT INTO programs_genres (genre_id, program_id)
 VALUES 
-    (1, 1),
-    (3, 1),
-    (2, 2),
-    (4, 2);
+(1, 1),
+(2, 1),
+(3, 2),
+(1, 3),
+(2, 3);
 
-INSERT INTO channel_programs (channel_id, program_id, start_time, end_time)
+INSERT INTO channel_programs (channel_id, program_id, start_time, end_time, is_repeat)
 VALUES 
-    (1, 1, '08:00:00', '10:00:00'), 
-    (1, 2, '10:00:00', '12:00:00'),
-    (2, 1, '08:00:00', '10:00:00'), 
-    (2, 2, '10:00:00', '12:00:00');
+(1, 1, '2023-05-19 20:00:00', '2023-05-19 20:30:00', FALSE),
+(2, 2, '2023-05-20 20:00:00', '2023-05-20 20:30:00', FALSE),
+(3, 3, '2023-05-21 20:00:00', '2023-05-21 20:30:00', FALSE),
+(1, 2, '2023-05-22 20:00:00', '2023-05-22 20:30:00', TRUE),
+(2, 3, '2023-05-23 20:00:00', '2023-05-23 20:30:00', TRUE);
 
 INSERT INTO view_counts (channel_program_id, episode_id, views)
 VALUES 
-    (1, 1, 5000),
-    (2, 2, 6000),
-    (3, 3, 7000),
-    (4, 4, 8000);  
+(1, 1, 1000),
+(1, 2, 900),
+(2, 3, 1200),
+(3, 4, 1100),
+(4, 3, 800),
+(5, 4, 700);
+ 
 
 ```
 
@@ -214,7 +225,7 @@ JOIN
 JOIN 
     episodes e ON s.id = e.season_id
 WHERE 
-    c.name = 'ドラマ' AND
+    c.name = 'channel 1' AND
     e.air_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
 ORDER BY 
     date,
